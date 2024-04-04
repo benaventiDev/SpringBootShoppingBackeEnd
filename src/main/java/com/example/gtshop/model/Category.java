@@ -1,5 +1,6 @@
 package com.example.gtshop.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Category {
     }
 
     @OneToMany(mappedBy = "category")
+    @JsonBackReference
     private List<Product> products;
 
 

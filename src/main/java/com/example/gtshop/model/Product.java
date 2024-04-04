@@ -1,5 +1,7 @@
 package com.example.gtshop.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,10 +40,12 @@ public class Product {
 
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    //@JsonBackReference
     @JoinColumn(name = "category_id")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonIgnore
     private List<Image> images;
 }

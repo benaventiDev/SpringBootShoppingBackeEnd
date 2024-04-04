@@ -1,23 +1,31 @@
 package com.example.gtshop.service.product;
 
+import com.example.gtshop.dto.ImageDto;
+import com.example.gtshop.dto.ProductDto;
 import com.example.gtshop.exceptions.ResourceNotFoundException;
 import com.example.gtshop.model.Category;
+import com.example.gtshop.model.Image;
 import com.example.gtshop.model.Product;
 import com.example.gtshop.repository.CategoryRepository;
+import com.example.gtshop.repository.ImageRepository;
 import com.example.gtshop.repository.ProductRepository;
 import com.example.gtshop.service.product.request.AddProductRequest;
-import com.example.gtshop.service.product.request.ProductUpdateRequest;
+import com.example.gtshop.service.product.request.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
+    private final ImageRepository imageRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -54,13 +62,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+    public Product updateProduct(UpdateProductRequest request, Long productId) {
         return productRepository.findById(productId).map(existingProduct -> updateExistingProduct(existingProduct, request))
                 .map(productRepository:: save)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
     }
 
-    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
+    private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request) {
         existingProduct.setName(request.getName());
         existingProduct.setBrand(request.getBrand());
         existingProduct.setPrice(request.getPrice());
@@ -79,7 +87,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategoryId(String category) {
+    public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategoryName(category);
     }
 
@@ -89,8 +97,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProductsbyBrandAndCategory(String brand, String category) {
-        return productRepository.findByCategoryNameAndBrand(brand, category);
+    public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
+        return productRepository.findByCategoryNameAndBrand(category, brand);
     }
 
     @Override
@@ -99,7 +107,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProductsbyBrandAndName(String brand, String name) {
+    public List<Product> getProductsByBrandAndName(String brand, String name) {
         return productRepository.findByBrandAndName(brand, name);
     }
 
@@ -112,4 +120,19 @@ public class ProductService implements IProductService {
     public Long countProductsByCategory(String category) {
         return productRepository.countByCategoryName(category);
     }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream().map(image -> modelMapper.map(image, ImageDto.class)).toList();
+        productDto.setImages(imageDtos);
+        return productDto;
+    }
+
 }
