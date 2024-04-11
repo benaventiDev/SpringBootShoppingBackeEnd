@@ -37,8 +37,11 @@ public class CartItemService implements ICartItemService {
         }
         cartItem.setTotalPrice();
         cart.addItem(cartItem);
-        cartItemRepository.save(cartItem);
+
+        var newCartId = cartItemRepository.save(cartItem);
         cartRepository.save(cart);
+
+        System.out.println("Adding Cart item id: " + newCartId + " with cart id: " + cartId);
     }
 
     @Override
@@ -62,8 +65,9 @@ public class CartItemService implements ICartItemService {
                     item.setUnitPrice(productService.getProductById(productId).getPrice());
                     item.setTotalPrice();
                 });
-        BigDecimal totalAmount = cart.getTotalAmount();
-        cart.setTotalAmount(totalAmount);
+        cart.updateTotalAmount();
+        //BigDecimal totalAmount = cart.getTotalAmount();
+        //cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }
 
