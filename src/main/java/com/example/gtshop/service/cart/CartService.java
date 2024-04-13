@@ -4,6 +4,7 @@ import com.example.gtshop.exceptions.ResourceNotFoundException;
 import com.example.gtshop.model.Cart;
 import com.example.gtshop.repository.CartItemRepository;
 import com.example.gtshop.repository.CartRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class CartService implements ICartService {
         return cartRepository.save(cart);
     }
 
+    @Transactional
     @Override
     public void clearCart(Long id) {
         Cart cart = getCart(id);
