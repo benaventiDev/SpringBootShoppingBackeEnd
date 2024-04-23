@@ -20,14 +20,17 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, unique = true, length = 50)
+    private String productCode;
     private String name;
     private String brand;
     private BigDecimal price;
     private int inventory;
     private String description;
 
-    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {
+    public Product(String name, String productCode, String brand, BigDecimal price, int inventory, String description, Category category) {
         this.name = name;
+        this.productCode = productCode;
         this.brand = brand;
         this.price = price;
         this.inventory = inventory;

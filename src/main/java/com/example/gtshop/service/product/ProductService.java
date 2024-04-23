@@ -2,6 +2,7 @@ package com.example.gtshop.service.product;
 
 import com.example.gtshop.dto.ImageDto;
 import com.example.gtshop.dto.ProductDto;
+import com.example.gtshop.exceptions.AlreadyExistsException;
 import com.example.gtshop.exceptions.ResourceNotFoundException;
 import com.example.gtshop.model.Category;
 import com.example.gtshop.model.Image;
@@ -9,8 +10,8 @@ import com.example.gtshop.model.Product;
 import com.example.gtshop.repository.CategoryRepository;
 import com.example.gtshop.repository.ImageRepository;
 import com.example.gtshop.repository.ProductRepository;
-import com.example.gtshop.service.product.request.AddProductRequest;
-import com.example.gtshop.service.product.request.UpdateProductRequest;
+import com.example.gtshop.request.product.AddProductRequest;
+import com.example.gtshop.request.product.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,10 @@ public class ProductService implements IProductService {
 
     @Override
     public Product addProduct(AddProductRequest request) {
+
+        if(productExists(request.getName(), request.getBrand())){
+            throw new AlreadyExistsException(request.getBrand() + " " + request.getName() + " already exists");
+        }
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName())).orElseGet(
                 () -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -38,10 +43,14 @@ public class ProductService implements IProductService {
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
     }
+    private boolean productExists(String name, String brand){
+        return productRepository.existsByNameAndBrand(name, brand);
+    }
 
     private Product createProduct(AddProductRequest request, Category category) {
         return new Product(
                 request.getName(),
+                request.getProductCode(),
                 request.getBrand(),
                 request.getPrice(),
                 request.getInventory(),
@@ -49,6 +58,9 @@ public class ProductService implements IProductService {
                 category
         );
     }
+
+
+
 
     @Override
     public Product getProductById(Long id) {
@@ -63,13 +75,15 @@ public class ProductService implements IProductService {
 
     @Override
     public Product updateProduct(UpdateProductRequest request, Long productId) {
-        return productRepository.findById(productId).map(existingProduct -> updateExistingProduct(existingProduct, request))
-                .map(productRepository:: save)
+        return productRepository.findByProductCode(request.getProductCode()).map(
+                        existingProduct -> updateExistingProduct(existingProduct, request)
+                ).map(productRepository::save)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
     }
 
     private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request) {
         existingProduct.setName(request.getName());
+        existingProduct.setProductCode(request.getProductCode());
         existingProduct.setBrand(request.getBrand());
         existingProduct.setPrice(request.getPrice());
         existingProduct.setInventory(request.getInventory());

@@ -2,8 +2,8 @@ package com.example.gtshop.service.product;
 
 import com.example.gtshop.dto.ProductDto;
 import com.example.gtshop.model.Product;
-import com.example.gtshop.service.product.request.AddProductRequest;
-import com.example.gtshop.service.product.request.UpdateProductRequest;
+import com.example.gtshop.request.product.AddProductRequest;
+import com.example.gtshop.request.product.UpdateProductRequest;
 
 import java.util.List;
 

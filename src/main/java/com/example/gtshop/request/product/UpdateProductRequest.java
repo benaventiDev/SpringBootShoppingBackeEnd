@@ -1,4 +1,4 @@
-package com.example.gtshop.service.product.request;
+package com.example.gtshop.request.product;
 
 import com.example.gtshop.model.Category;
 import lombok.Data;
@@ -6,9 +6,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class AddProductRequest {
+public class UpdateProductRequest {
     private Long id;
     private String name;
+    private String productCode;
     private String brand;
     private BigDecimal price;
     private int inventory;

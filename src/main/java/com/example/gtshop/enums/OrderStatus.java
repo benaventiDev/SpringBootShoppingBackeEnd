@@ -1,7 +1,7 @@
 package com.example.gtshop.enums;
 
 public enum OrderStatus {
-    PEMDING,
+    PENDING,
     PROCESSING,
     SHIPPED,
     DELIVERED,

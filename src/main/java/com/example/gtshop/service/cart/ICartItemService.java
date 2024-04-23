@@ -1,5 +1,6 @@
 package com.example.gtshop.service.cart;
 
+import com.example.gtshop.dto.CartItemDto;
 import com.example.gtshop.model.CartItem;
 
 public interface ICartItemService {
@@ -8,4 +9,5 @@ public interface ICartItemService {
     void updateItemQuantity(Long cartId, Long productId, int quantity);
 
     CartItem getCartItem(Long cartId, Long productId);
+    CartItemDto convertToCartitemDto(CartItem cartItem);
 }

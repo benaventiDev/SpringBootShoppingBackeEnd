@@ -7,6 +7,7 @@ import com.example.gtshop.model.Product;
 import com.example.gtshop.repository.ImageRepository;
 import com.example.gtshop.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,11 +22,18 @@ import java.util.List;
 public class ImageService implements IImageService {
     private final ImageRepository imageRepository;
     private final IProductService productService;
+    private final ModelMapper modelMapper;
 
+    @Override
+    public ImageDto getImageDtoById(Long id) {
+        Image image = getImageById(id);
+        return convertImageToDto(image);
+    }
     @Override
     public Image getImageById(Long id) {
         return imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No image found with id: " + id));
     }
+
 
     @Override
     public void deleteImageById(Long id) {
@@ -79,7 +87,9 @@ public class ImageService implements IImageService {
         }catch (IOException|SQLException e){
             throw new RuntimeException(e.getMessage());
         }
+    }
 
-
+    private ImageDto convertImageToDto(Image image){
+        return modelMapper.map(image, ImageDto.class);
     }
 }

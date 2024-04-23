@@ -51,7 +51,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file) {
 
         try {
-            Image image = imageService.getImageById(imageId);
+            ImageDto image = imageService.getImageDtoById(imageId);
             if (image != null) {
                 imageService.updateImage(file, imageId);
                 return ResponseEntity.ok(new ApiResponse("Update successful", null));
@@ -65,7 +65,7 @@ public class ImageController {
     @DeleteMapping("/image/{imageId}/delete")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId){
         try {
-            Image image = imageService.getImageById(imageId);
+            ImageDto image = imageService.getImageDtoById(imageId);
             if (image != null) {
                 imageService.deleteImageById(imageId);
                 return ResponseEntity.ok(new ApiResponse("Delete successful", null));

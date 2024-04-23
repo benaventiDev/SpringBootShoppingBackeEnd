@@ -1,6 +1,7 @@
 package com.example.gtshop.controller;
 
 
+import com.example.gtshop.dto.CartDto;
 import com.example.gtshop.exceptions.ResourceNotFoundException;
 import com.example.gtshop.model.Cart;
 import com.example.gtshop.response.ApiResponse;
@@ -22,7 +23,7 @@ public class CartController {
     @GetMapping("/{cartId}/my-cart")
     public ResponseEntity<ApiResponse> getCart(@PathVariable Long cartId) {
         try {
-            Cart cart = cartService.getCart(cartId);
+            CartDto cart = cartService.convertToCartDto(cartService.getCart(cartId));
             return ResponseEntity.ok(new ApiResponse("success", cart));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

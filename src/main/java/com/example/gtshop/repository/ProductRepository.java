@@ -4,6 +4,7 @@ import com.example.gtshop.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategoryName(String category);
@@ -14,4 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Long countByBrandAndName(String brand, String name);
     Long countByCategoryName(String category);
+
+    Boolean existsByNameAndBrand(String name, String brand);
+
+    Optional<Product> findByProductCode(String productCode);
 }

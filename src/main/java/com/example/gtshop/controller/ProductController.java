@@ -1,20 +1,20 @@
 package com.example.gtshop.controller;
 
 import com.example.gtshop.dto.ProductDto;
+import com.example.gtshop.exceptions.AlreadyExistsException;
 import com.example.gtshop.exceptions.ResourceNotFoundException;
 import com.example.gtshop.model.Product;
 import com.example.gtshop.response.ApiResponse;
 import com.example.gtshop.service.product.IProductService;
-import com.example.gtshop.service.product.request.AddProductRequest;
-import com.example.gtshop.service.product.request.UpdateProductRequest;
+import com.example.gtshop.request.product.AddProductRequest;
+import com.example.gtshop.request.product.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -47,7 +47,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
         try {
             Product result = productService.addProduct(product);
-            return ResponseEntity.ok(new ApiResponse("success", result));
+            ProductDto productDto = productService.convertToDto(result);
+            return ResponseEntity.ok(new ApiResponse("success", productDto));
+        } catch (AlreadyExistsException ex) {
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ex.getMessage(), null));
         } catch (Exception ex) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(ex.getMessage(), null));
         }

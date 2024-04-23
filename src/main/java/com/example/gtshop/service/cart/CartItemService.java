@@ -1,5 +1,6 @@
 package com.example.gtshop.service.cart;
 
+import com.example.gtshop.dto.CartItemDto;
 import com.example.gtshop.model.Cart;
 import com.example.gtshop.model.CartItem;
 import com.example.gtshop.model.Product;
@@ -7,9 +8,9 @@ import com.example.gtshop.repository.CartItemRepository;
 import com.example.gtshop.repository.CartRepository;
 import com.example.gtshop.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class CartItemService implements ICartItemService {
     private final IProductService productService;
     private final ICartService cartService;
     private final CartRepository cartRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public void addItemToCart(Long cartId, Long productId, int quantity) {
@@ -40,8 +42,6 @@ public class CartItemService implements ICartItemService {
 
         var newCartId = cartItemRepository.save(cartItem);
         cartRepository.save(cart);
-
-        System.out.println("Adding Cart item id: " + newCartId + " with cart id: " + cartId);
     }
 
     @Override
@@ -66,8 +66,6 @@ public class CartItemService implements ICartItemService {
                     item.setTotalPrice();
                 });
         cart.updateTotalAmount();
-        //BigDecimal totalAmount = cart.getTotalAmount();
-        //cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }
 
@@ -79,5 +77,10 @@ public class CartItemService implements ICartItemService {
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    @Override
+    public CartItemDto convertToCartitemDto(CartItem cartItem) {
+        return modelMapper.map(cartItem, CartItemDto.class);
     }
 }
