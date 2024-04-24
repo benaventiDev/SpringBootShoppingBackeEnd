@@ -29,14 +29,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // https://mvnrepository.com/artifact/org.modelmapper.extensions/modelmapper-spring
-    //implementation("org.modelmapper.extensions:modelmapper-spring:3.2.2")
-
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.modelmapper.extensions:modelmapper-spring:$modelMapperVersion")
+
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
